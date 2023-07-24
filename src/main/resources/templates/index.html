@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Elevator</title>
+</head>
+<body>
+<h3>Elevator</h3>
+<div>max floor: <span id="max"></span></div>
+<div>direction: <span id="direction"> </span></div>
+<div>current floor: <span id="current"> </span></div>
+<div>person count: <span id="person"> </span></div>
+<div>active floor button: <span id="active"> </span></div>
+<hr>
+<div>
+    from:<input type="text" id="from">&nbsp;
+    to:<input type="text" id="to">
+    <button id="newReq" onclick="sendNewRequest()">Request</button>
+</div>
+<script>
+    function getMaxFloor() {
+        let url = '/api/maxfloor'
+        setTimeout(() => {
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(async (res) => {
+                let max = await res.text();
+                document.getElementById("max").innerHTML = max;
+            });
+        }, 100);
+    }
+    function getDirection() {
+        let url = '/api/direction'
+        setInterval(() => {
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(async (res) => {
+                let direction = await res.text();
+                console.log(direction);
+                document.getElementById("direction").innerHTML = direction;
+            });
+        }, 500);
+    }
+
+    function getCurrentFloor() {
+        let url = '/api/current'
+        setInterval(() => {
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(async (res) => {
+                let cur = await res.text();
+                document.getElementById("current").innerHTML = cur;
+            });
+        }, 500);
+    }
+
+    function getPersonCount() {
+        let url = '/api/person'
+        setInterval(() => {
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(async (res) => {
+                let cur = await res.text();
+                document.getElementById("person").innerHTML = cur;
+            });
+        }, 500);
+    }
+
+    function getActiveButton() {
+        let url = '/api/inner/req'
+        setInterval(() => {
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(async (res) => {
+                let cur = await res.text();
+                document.getElementById("active").innerHTML = cur;
+            });
+        }, 500);
+    }
+
+    function sendNewRequest() {
+        let from = document.getElementById('from').value;
+        let to = document.getElementById('to').value;
+        let url = `/api/from/${from}/to/${to}`;
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(async (res) => {
+            let body = await res.text();
+            console.log(body)
+            document.getElementById('from').value = null;
+            document.getElementById('to').value = null;
+        });
+    }
+
+    getMaxFloor();
+    getDirection();
+    getCurrentFloor();
+    getPersonCount();
+    getActiveButton();
+</script>
+</body>
+</html>
